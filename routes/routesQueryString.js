@@ -4,16 +4,23 @@ const { productQueryString } = require("../querys/queryStrings");
 
 const prepararHATEOAS = (inventario) => {
     const total = inventario.length;
+
+    let stock = 0;
+    inventario.forEach(item => {
+        stock += item.stock;
+    });
+
     const results = inventario.map((m) => {
         return {
             name: m.nombre,
             href: `/joyas/joya/${m.id}`,
         }
-    }).slice(0, 4);    
+    });   
 
     //data de salida
     const HATEOAS = {
         "totalJoyas": total,
+        "totalStock": stock,
         results
     };
 
