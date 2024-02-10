@@ -1,11 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const joyasRoutes = require("./joyasRoutes");
+const routesQueryString = require("./routesQueryString");
 
-router.use("/joyas", joyasRoutes);
-
-router.get("/joyas", (req, res) => {
-    res.status(200).json({message: "ruta joyas ok"})
-})
+router.use("/joyas", joyasRoutes, routesQueryString);
 
 module.exports = router;
