@@ -5,7 +5,7 @@ const routesQueryString = require("./routesQueryString");
 
 router.use("/joyas", joyasRoutes, routesQueryString);
 router.get("*", (req, res) => {
-    res.status(404).send("Ruta no encontrada");
+    res.status(404).json({ message: "Ruta no encontrada" });
 });
 
 module.exports = router;
