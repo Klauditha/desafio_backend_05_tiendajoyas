@@ -24,12 +24,12 @@ const getJoyasAllFields = async (precio_min, precio_max, categoria, metal) => {
     agregarFiltro('metal', '=', metal);
   }
   let query = 'SELECT * FROM inventario';
-  console.log(filtros);
+
   if (filtros.length) {
     filtros = filtros.join(' AND ');
     query += ` WHERE ${filtros}`;
   }
-  console.log(query, values);
+
   const { rows: joyas } = await pool.query(query, values);
   return joyas;
 };
