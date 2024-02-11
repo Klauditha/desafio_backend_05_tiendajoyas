@@ -10,4 +10,12 @@ const pool = new Pool({
   allowExitOnIdle: true,
 });
 
+//prueba de conexion con Base dato
+const getData = async () => {
+    const res = await pool.query("select NOW()");
+    console.log(res.rows);
+};
+
+getData();
+
 module.exports = { pool };
