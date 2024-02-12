@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { check } = require('express-validator');
-const { getJoyasAllFields } = require('../querys/querys');
-const { productQueryString } = require('../querys/queryStrings');
-const { validarCampos } = require('../middlewares');
+const { getJoyasAllFields, productQueryString } = require('../querys/querys');
+const { validarCampos } = require('../middlewares/validation.handlers');
 
 const prepararHATEOAS = (inventario) => {
   const total = inventario.length;
@@ -37,19 +36,27 @@ router.get(
     check(
       'precio_min',
       " El valor del parámetro 'precio_min' debe ser numérico"
-    ).isNumeric(),
+    )
+      .isNumeric()
+      .optional(),
     check(
       'precio_max',
       " El valor del parámetro 'precio_max' debe ser numérico"
-    ).isNumeric(),
+    )
+      .isNumeric()
+      .optional(),
     check(
       'metal',
       ' El valor del parámetro metal no corresponde a un metal válido'
-    ).isIn(['oro', 'plata', 'bronce']),
+    )
+      .isIn(['oro', 'plata', 'bronce'])
+      .optional(),
     check(
       'categoria',
       ' El valor del parámetro categoria no corresponde a una categoría válida'
-    ).isIn(['collar', 'aros', 'anillo']),
+    )
+      .isIn(['collar', 'aros', 'anillo'])
+      .optional(),
     validarCampos,
   ],
   async (req, res) => {
@@ -61,7 +68,7 @@ router.get(
         categoria,
         metal
       );
-      res.send(joyas);
+      res.json(joyas);
     } catch (error) {
       res.status(500).send({ error: error.message });
     }
@@ -70,29 +77,35 @@ router.get(
 
 router.get(
   '/',
+
   [
-    check('page', 'El valor de la página debe ser numérico').isNumeric(),
-    check('limits', 'El valor de los límites debe ser numérico').isNumeric(),
+    check('page', 'El valor de la página debe ser numérico')
+      .isNumeric()
+      .optional(),
+    check('limits', 'El valor de los límites debe ser numérico')
+      .isNumeric()
+      .optional(),
     check(
       'order_by',
       'El valor del parámetro order_by no corresponde a una ordenación válida'
-    ).isIn([
-      'id_ASC',
-      'id_DESC',
-      'nombre_ASC',
-      'nombre_DESC',
-      'stock_ASC',
-      'stock_DESC',
-      'precio_ASC',
-      'precio_DESC',
-    ]),
+    )
+      .isIn([
+        'id_ASC',
+        'id_DESC',
+        'nombre_ASC',
+        'nombre_DESC',
+        'stock_ASC',
+        'stock_DESC',
+        'precio_ASC',
+        'precio_DESC',
+      ])
+      .optional(),
     validarCampos,
   ],
   async (req, res) => {
     try {
       const queryStrings = req.query;
       const inventario = await productQueryString(queryStrings);
-      console.log(inventario);
       const HATEOAS = prepararHATEOAS(inventario);
       res.json(HATEOAS);
     } catch (error) {
