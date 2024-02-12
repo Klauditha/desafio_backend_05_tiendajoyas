@@ -31,7 +31,6 @@ router.get("/", async (req, res) => {
     try {
         const queryStrings = req.query;
         const inventario = await productQueryString(queryStrings);
-        console.log(inventario);
         const HATEOAS = prepararHATEOAS(inventario)
         res.json(HATEOAS);
         
