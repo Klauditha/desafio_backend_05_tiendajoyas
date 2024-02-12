@@ -2,7 +2,6 @@ const { pool } = require('../config/db');
 const format = require('pg-format');
 
 const getJoyasAllFields = async (precio_min, precio_max, categoria, metal) => {
-  console.log(precio_min, precio_max, categoria, metal);
   let filtros = [];
   let values = [];
 
@@ -24,16 +23,35 @@ const getJoyasAllFields = async (precio_min, precio_max, categoria, metal) => {
     agregarFiltro('metal', '=', metal);
   }
   let query = 'SELECT * FROM inventario';
-  console.log(filtros);
+
   if (filtros.length) {
     filtros = filtros.join(' AND ');
     query += ` WHERE ${filtros}`;
   }
-  console.log(query, values);
+
   const { rows: joyas } = await pool.query(query, values);
   return joyas;
 };
 
+const productQueryString = async ({
+  limits = 10,
+  page = 1,
+  order_by = 'stock_ASC',
+}) => {
+  const [campo, direccion] = order_by.split('_');
+  const offset = (page - 1) * limits;
+  const formatQuery = format(
+    'SELECT * FROM inventario ORDER BY %s %s LIMIT %s OFFSET %s',
+    campo,
+    direccion,
+    limits,
+    offset
+  );
+  const { rows } = await pool.query(formatQuery);
+  return rows;
+};
+
 module.exports = {
   getJoyasAllFields,
+  productQueryString,
 };

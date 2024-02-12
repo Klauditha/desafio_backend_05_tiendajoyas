@@ -11,9 +11,14 @@ const pool = new Pool({
 });
 
 //prueba de conexion con Base dato
+
 const getData = async () => {
-    const res = await pool.query("select NOW()");
+  try {
+    const res = await pool.query('select NOW()');
     console.log(res.rows);
+  } catch (error) {
+    console.log('Error al conectar con la base de datos', error);
+  }
 };
 
 getData();
